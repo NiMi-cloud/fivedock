@@ -1,0 +1,35 @@
+name: Deploy (Cloudflare Pages, optional)
+
+# Alternative zu GitHub Pages (deploy.yml): Cloudflare setzt echte Sicherheits-Header und erlaubt eine eigene Domain ohne Umwege.
+# Läuft nur von Hand, und nur, wenn die Secrets CLOUDFLARE_API_TOKEN und CLOUDFLARE_ACCOUNT_ID sowie die Variable CLOUDFLARE_PROJECT gesetzt sind.
+# Der Build bricht ab, solange die Betreiberangaben (VITE_OPERATOR_*, siehe src/legal.config.ts) fehlen (Impressumspflicht).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r typecheck
+      - run: pnpm -r test
+      - run: pnpm --filter @toolkit/web build
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/web/dist --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=main

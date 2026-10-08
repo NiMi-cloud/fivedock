@@ -1,0 +1,29 @@
+# Lokaler Test-Server für fivedock. NICHT öffentlich erreichbar (nur 127.0.0.1).
+# Vorlage: wird von setup-local-server.ps1 nach .local/fxserver/server-data/server.cfg kopiert.
+# Den Lizenzschlüssel musst du selbst erzeugen: https://portal.cfx.re -> Server -> Registration Keys.
+
+endpoint_add_tcp "127.0.0.1:30120"
+endpoint_add_udp "127.0.0.1:30120"
+
+sv_hostname "fivedock lokaler Test"
+sv_maxclients 2
+sets sv_projectName "fivedock Test"
+sets locale "de-DE"
+
+sv_licenseKey "HIER_DEIN_CFX_LIZENZSCHLUESSEL"
+
+# Systemressourcen und Basis-Spielmodus
+ensure mapmanager
+ensure chat
+ensure spawnmanager
+ensure sessionmanager
+ensure basic-gamemode
+ensure hardcap
+
+# Test
+ensure forge_test_runner
+# Generierte Ressourcen werden hier eingetragen, z. B.:
+# ensure forge_cube
+
+add_ace group.admin command allow
+add_ace resource.forge_test_runner command allow

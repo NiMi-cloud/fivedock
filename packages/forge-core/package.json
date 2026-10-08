@@ -1,0 +1,24 @@
+{
+  "name": "@toolkit/forge-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kernlogik der Tools: Modellaufbereitung, Kollision, LODs, Paketierung. Läuft im Browser und in Node.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "@toolkit/rage-formats": "workspace:*",
+    "fflate": "^0.8.3",
+    "meshoptimizer": "^1.3.0"
+  }
+}

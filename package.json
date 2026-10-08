@@ -1,0 +1,17 @@
+{
+  "name": "fivedock",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FiveDock: Werkstatt im Browser für FiveM-Fahrzeuge, Props und Texturen. Rechnen im Browser statt auf einem Server.",
+  "author": "NiMi",
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test"
+  }
+}

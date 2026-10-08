@@ -1,0 +1,38 @@
+# Abhängigkeiten und Build-Ausgaben
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# .NET
+bin/
+obj/
+.dotnet/
+*.user
+
+# Lokale Testumgebung (FXServer, GTA-Dateien, Referenz-Exporte)
+.local/
+fxserver/
+reference-exports/
+
+# Rockstar-Material darf NIE ins Repo
+*.rpf
+*.ydr
+*.yft
+*.ydd
+*.ytd
+*.ybn
+*.ytyp
+*.ycd
+*.ymap
+!spikes/**/expected/*.ydr
+!spikes/**/expected/*.ytd
+!spikes/**/expected/*.ytyp
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.env
+.env.*

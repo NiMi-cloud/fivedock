@@ -1,0 +1,58 @@
+name: Deploy (GitHub Pages)
+
+# Veröffentlicht die Seite auf GitHub Pages. Läuft auf dem Hauptzweig oder von Hand.
+# Der Build bricht ab, solange die Betreiberangaben (Repository-Variablen OPERATOR_*) fehlen (Impressumspflicht).
+# Einmalig nötig: im Repository unter Settings -> Pages als Quelle "GitHub Actions" wählen.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r typecheck
+      - run: pnpm -r test
+      - run: pnpm --filter @toolkit/web build
+        env:
+          # <name>.github.io liegt im Wurzelverzeichnis, jedes andere Repository unter /<Repository>/
+          PAGES_BASE: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}/', github.event.repository.name) }}
+          # Betreiberangaben fürs Impressum: Repository-Variablen (Settings, Secrets and variables, Actions, Variables), nicht im Code
+          VITE_OPERATOR_NAME: ${{ vars.OPERATOR_NAME }}
+          VITE_OPERATOR_STREET: ${{ vars.OPERATOR_STREET }}
+          VITE_OPERATOR_CITY: ${{ vars.OPERATOR_CITY }}
+          VITE_OPERATOR_COUNTRY: ${{ vars.OPERATOR_COUNTRY }}
+          VITE_OPERATOR_EMAIL: ${{ vars.OPERATOR_EMAIL }}
+          VITE_OPERATOR_PHONE: ${{ vars.OPERATOR_PHONE }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
